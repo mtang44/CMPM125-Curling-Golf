@@ -14,8 +14,8 @@ public class PlayerTurnManager : MonoBehaviour
     // public GameObject RightArrow;
     // public GameObject LeftArrow;
 
-    public TextMeshProUGUI player1_score_text;
-    public TextMeshProUGUI player2_score_text;
+    // public TextMeshProUGUI player1_score_text;
+    // public TextMeshProUGUI player2_score_text;
     public GameObject spawnPosition; 
     
     
@@ -51,8 +51,8 @@ public class PlayerTurnManager : MonoBehaviour
     {
         Debug.Log("Current Player: " + currentPlayer.player_number);
         main_camera.transform.position = Vector3.MoveTowards(main_camera.transform.position, CameraTarget.transform.position + cameraOffset, Time.deltaTime * 100);
-        player1_score_text.text = "Player 1 Score: " + player1.score;
-        player2_score_text.text = "Player 2 Score: " + player2.score;
+        // player1_score_text.text = "Player 1 Score: " + player1.score;
+        // player2_score_text.text = "Player 2 Score: " + player2.score;
     }
 
     public void EndTurn()
