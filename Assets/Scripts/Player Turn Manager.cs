@@ -26,52 +26,88 @@ public class PlayerTurnManager : MonoBehaviour
     private GameObject scoring_target;
     
     private Vector3 cameraOffset;
-   
+    private Vector3 CONST_CAMERA_STONE_OFFSET = new Vector3(0,7,8);
+    private Vector3 CONST_CAMERA_SCOREBOARD_OFFSET = new Vector3(0,10,30);
 
-    
-
-    
-    [SerializeField] private int currentPlayerIndex = 1;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [SerializeField] private Player currentPlayer;
+    // spawns player 1 and finds uo; 
     void Start()
     {
         RightArrow = GameObject.Find("Curve Right");
         LeftArrow = GameObject.Find("Curve Left");
-        CameraTarget = Instantiate(player1_stone, new Vector3(0,1,0), Quaternion.identity);
         scoring_target = GameObject.Find("Scoring Target");
-        cameraOffset = new Vector3(0,7,8);
         main_camera = Camera.main;
+        cameraOffset = CONST_CAMERA_STONE_OFFSET;
+
+        player1.curlingStone = Instantiate(player1_stone, new Vector3(0,1,0), Quaternion.identity);
+        player1.alreadySpawned = true;
+        currentPlayer = player1; 
+        CameraTarget = player1.curlingStone;
+   
     }
 
-    // Update is called once per frame
+    // constantly updates camera's position to follow current player's stone and updates score text on scoreboard;
     void Update()
     {
+        Debug.Log("Current Player: " + currentPlayer.player_number);
         main_camera.transform.position = Vector3.MoveTowards(main_camera.transform.position, CameraTarget.transform.position + cameraOffset, Time.deltaTime * 100);
-        player1_score_text.text = "" + player1.score;
-        player2_score_text.text = "" + player2.score;
+        player1_score_text.text = "Player 1 Score: " + player1.score;
+        player2_score_text.text = "Player 2 Score: " + player2.score;
     }
+
     public void EndTurn()
     {
-        UpdatePlayerScores();
-        if(currentPlayerIndex == 1 && player1.stones_remaining > 0 ) // > 1 since player starts with stone already on field
+        // UpdatePlayerScores();
+        if(player2.alreadySpawned == false ) // player 2 not yet spawned spawn player 2 stone and switch to player 2
         {
-            player1.stones_remaining--;
-            cameraOffset = new Vector3(0,7,8);
-            CameraTarget = Instantiate(player2_stone, new Vector3(0,.2f,0), Quaternion.identity);
-            
-            currentPlayerIndex = 2;
+            player1.shotsTaken++;
+         
+            // spawn player 2 stone at beginning of course; 
+            player2.curlingStone = Instantiate(player2_stone, new Vector3(0,.2f,0), Quaternion.identity);
+            currentPlayer = player2;
+            CameraTarget = player2.curlingStone;
+            player2.alreadySpawned = true;
+             
         }
-        else if(currentPlayerIndex == 2 && player2.stones_remaining > 0)
+        else // all players already spawned in game switch to other player
         {
-            player2.stones_remaining--;
-            cameraOffset = new Vector3(0,7,8);
-            CameraTarget = Instantiate(player1_stone, new Vector3(0,.2f,0), Quaternion.identity);
-            
-        
-            currentPlayerIndex = 1;
+            SwitchPlayer();
+        }
+    }
+    public void UpdatePlayerScores()
+    {
+        player1.score = scoring_target.GetComponent<TargetScoring>().Calculate_Score(player1.player_number);
+        player2.score = scoring_target.GetComponent<TargetScoring>().Calculate_Score(player2.player_number);
+        Debug.Log("Player 1 Score: " + player1.score);
+        Debug.Log("Player 2 Score: " + player2.score);
+    }
+    public void resetScene()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+    public void SwitchPlayer()
+    {
+        Debug.Log("currentPlayer at switch player statement" + currentPlayer.player_number);
+        if(currentPlayer.player_number == 1)
+        {
+            Debug.Log("SWITCHING TO PLAYER 2");
+            player1.curlingStone.GetComponent<StoneController>().disableTurn();
+            player2.curlingStone.GetComponent<StoneController>().reEnableTurn();
+            currentPlayer = player2;
         }
         else
-        {
+        {   
+
+            Debug.Log("SWITCHING TO PLAYER 1");
+            player1.curlingStone.GetComponent<StoneController>().reEnableTurn();
+            player2.curlingStone.GetComponent<StoneController>().disableTurn();
+            currentPlayer = player1;
+            
+        }
+        CameraTarget = currentPlayer.curlingStone;
+    }
+    public void EndGame()
+    {
             RightArrow.SetActive(false);
             LeftArrow.SetActive(false);
             WinnerText.SetActive(true);
@@ -91,19 +127,7 @@ public class PlayerTurnManager : MonoBehaviour
                 WinnerText.GetComponentInChildren<TextMeshProUGUI>().text = "Tie Game!";
                 WinnerText.GetComponentInChildren<TextMeshProUGUI>().color = Color.grey;
             }
-            cameraOffset = new Vector3(5,10,30);
+            cameraOffset = CONST_CAMERA_SCOREBOARD_OFFSET;
             CameraTarget = ScoreBoard;
-        }
-    }
-    public void UpdatePlayerScores()
-    {
-        player1.score = scoring_target.GetComponent<TargetScoring>().Calculate_Score(player1.player_number);
-        player2.score = scoring_target.GetComponent<TargetScoring>().Calculate_Score(player2.player_number);
-        Debug.Log("Player 1 Score: " + player1.score);
-        Debug.Log("Player 2 Score: " + player2.score);
-    }
-    public void resetScene()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

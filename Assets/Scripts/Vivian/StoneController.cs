@@ -101,12 +101,23 @@ public class StoneController : MonoBehaviour
             }
             else if(hasStartedMoving && !hasBeenScored && rb.linearVelocity.magnitude < 0.1f)
             {
-                Destroy(Ir);
+                // Destroy(Ir);
                 turnManager.EndTurn();
                 hasBeenScored = true;
             }
             
         }
+    }
+    public void reEnableTurn()
+    {
+        hasBeenThrown = false;
+        hasBeenScored = false;
+        hasStartedMoving = false;
+
+    }
+    public void disableTurn()
+    {
+        hasBeenThrown = true;
     }
 
     void AimWithMouse()
