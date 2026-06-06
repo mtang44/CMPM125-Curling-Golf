@@ -9,20 +9,20 @@ public class PlayerTurnManager : MonoBehaviour
 {
     public GameObject player1_stone;
     public GameObject player2_stone;
-    public GameObject ScoreBoard;
-    public GameObject WinnerText;
-    public GameObject RightArrow;
-    public GameObject LeftArrow;
+    //public GameObject ScoreBoard;
+    //public GameObject WinnerText;
+    // public GameObject RightArrow;
+    // public GameObject LeftArrow;
 
     public TextMeshProUGUI player1_score_text;
     public TextMeshProUGUI player2_score_text;
+    public GameObject spawnPosition; 
     
     
     public Camera main_camera;
     private Player player1 = new Player(1);
     private Player player2 = new Player(2);
     private GameObject CameraTarget;
-
     private GameObject scoring_target;
     
     private Vector3 cameraOffset;
@@ -33,13 +33,13 @@ public class PlayerTurnManager : MonoBehaviour
     // spawns player 1 and finds uo; 
     void Start()
     {
-        RightArrow = GameObject.Find("Curve Right");
-        LeftArrow = GameObject.Find("Curve Left");
+        // RightArrow = GameObject.Find("Curve Right");
+        // LeftArrow = GameObject.Find("Curve Left");
         scoring_target = GameObject.Find("Scoring Target");
         main_camera = Camera.main;
         cameraOffset = CONST_CAMERA_STONE_OFFSET;
 
-        player1.curlingStone = Instantiate(player1_stone, new Vector3(0,1,0), Quaternion.identity);
+        player1.curlingStone = Instantiate(player1_stone, spawnPosition.transform.position, Quaternion.identity);
         player1.alreadySpawned = true;
         currentPlayer = player1; 
         CameraTarget = player1.curlingStone;
@@ -63,7 +63,7 @@ public class PlayerTurnManager : MonoBehaviour
             player1.shotsTaken++;
          
             // spawn player 2 stone at beginning of course; 
-            player2.curlingStone = Instantiate(player2_stone, new Vector3(0,.2f,0), Quaternion.identity);
+            player2.curlingStone = Instantiate(player2_stone, spawnPosition.transform.position, Quaternion.identity);
             currentPlayer = player2;
             CameraTarget = player2.curlingStone;
             player2.alreadySpawned = true;
@@ -106,28 +106,28 @@ public class PlayerTurnManager : MonoBehaviour
         }
         CameraTarget = currentPlayer.curlingStone;
     }
-    public void EndGame()
-    {
-            RightArrow.SetActive(false);
-            LeftArrow.SetActive(false);
-            WinnerText.SetActive(true);
-            // end of game logic here 
-            if(player1.score > player2.score)
-            {
-                WinnerText.GetComponentInChildren<TextMeshProUGUI>().text = "Player 1 Wins!";
-                WinnerText.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
-            }
-            else if (player2.score > player1.score)
-            {
-                WinnerText.GetComponentInChildren<TextMeshProUGUI>().text = "Player 2 Wins!";
-                WinnerText.GetComponentInChildren<TextMeshProUGUI>().color = Color.blue;
-            }
-            else
-            {
-                WinnerText.GetComponentInChildren<TextMeshProUGUI>().text = "Tie Game!";
-                WinnerText.GetComponentInChildren<TextMeshProUGUI>().color = Color.grey;
-            }
-            cameraOffset = CONST_CAMERA_SCOREBOARD_OFFSET;
-            CameraTarget = ScoreBoard;
-    }
+    // public void EndGame()
+    // {
+    //         RightArrow.SetActive(false);
+    //         LeftArrow.SetActive(false);
+    //         WinnerText.SetActive(true);
+    //         // end of game logic here 
+    //         if(player1.score > player2.score)
+    //         {
+    //             WinnerText.GetComponentInChildren<TextMeshProUGUI>().text = "Player 1 Wins!";
+    //             WinnerText.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+    //         }
+    //         else if (player2.score > player1.score)
+    //         {
+    //             WinnerText.GetComponentInChildren<TextMeshProUGUI>().text = "Player 2 Wins!";
+    //             WinnerText.GetComponentInChildren<TextMeshProUGUI>().color = Color.blue;
+    //         }
+    //         else
+    //         {
+    //             WinnerText.GetComponentInChildren<TextMeshProUGUI>().text = "Tie Game!";
+    //             WinnerText.GetComponentInChildren<TextMeshProUGUI>().color = Color.grey;
+    //         }
+    //         cameraOffset = CONST_CAMERA_SCOREBOARD_OFFSET;
+    //         CameraTarget = ScoreBoard;
+    // }
 }
