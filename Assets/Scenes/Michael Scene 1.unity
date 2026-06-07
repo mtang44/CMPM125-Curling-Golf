@@ -433,6 +433,8 @@ MonoBehaviour:
   player2_stone: {fileID: 5755702748703871304, guid: 832060f99d611c749a560c0b21c4c886, type: 3}
   spawnPosition: {fileID: 298763268}
   main_camera: {fileID: 1844167093}
+  scoring_targets:
+  - {fileID: 1384509688}
   currentPlayer: {fileID: 0}
 --- !u!4 &112977882
 Transform:
@@ -1963,7 +1965,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5975985280066418740, guid: ac2bf11b3124dbf4abc4af016d9fe9e7, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -133.7
+      value: -10.07
       objectReference: {fileID: 0}
     - target: {fileID: 5975985280066418740, guid: ac2bf11b3124dbf4abc4af016d9fe9e7, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2936,6 +2938,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1295378179}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1384509688 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6633773813851501531, guid: ac2bf11b3124dbf4abc4af016d9fe9e7, type: 3}
+  m_PrefabInstance: {fileID: 794988364}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1437508873
 PrefabInstance:
   m_ObjectHideFlags: 0

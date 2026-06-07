@@ -4,6 +4,8 @@ using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
+using System.Collections.Generic;
+using UnityEditor.Build.Content;
 
 public class PlayerTurnManager : MonoBehaviour
 {
@@ -20,10 +22,11 @@ public class PlayerTurnManager : MonoBehaviour
     
     
     public Camera main_camera;
-    private Player player1 = new Player(1);
-    private Player player2 = new Player(2);
+    [SerializeField] private Player player1 = new Player(1);
+    [SerializeField] private Player player2 = new Player(2);
     private GameObject CameraTarget;
-    private GameObject scoring_target;
+    [SerializeField] private List<GameObject> scoring_targets;
+    private bool currentHoleHasBeenScored = false;
     
     private Vector3 cameraOffset;
     private Vector3 CONST_CAMERA_STONE_OFFSET = new Vector3(0,7,8);
@@ -35,7 +38,6 @@ public class PlayerTurnManager : MonoBehaviour
     {
         // RightArrow = GameObject.Find("Curve Right");
         // LeftArrow = GameObject.Find("Curve Left");
-        scoring_target = GameObject.Find("Scoring Target");
         main_camera = Camera.main;
         cameraOffset = CONST_CAMERA_STONE_OFFSET;
 
@@ -49,15 +51,30 @@ public class PlayerTurnManager : MonoBehaviour
     // constantly updates camera's position to follow current player's stone and updates score text on scoreboard;
     void Update()
     {
-        Debug.Log("Current Player: " + currentPlayer.player_number);
+        Debug.Log("Player 1 already entered scoring target: " + player1.alreadyEnteredScoringTarget);
+        Debug.Log("Player 2 already entered scoring target: " + player2.alreadyEnteredScoringTarget);
+        Debug.Log("Current Hole Has Been Scored: " + currentHoleHasBeenScored);
+        if(player1.alreadyEnteredScoringTarget && player2.alreadyEnteredScoringTarget && !currentHoleHasBeenScored)
+        {
+            Debug.Log("Both players have entered scoring target, calculating score");
+            currentHoleHasBeenScored = true;
+            ScoreHole();
+        }
         main_camera.transform.position = Vector3.MoveTowards(main_camera.transform.position, CameraTarget.transform.position + cameraOffset, Time.deltaTime * 100);
         // player1_score_text.text = "Player 1 Score: " + player1.score;
         // player2_score_text.text = "Player 2 Score: " + player2.score;
     }
-
+    // function to score the hole and update player scores. 
+    public void ScoreHole()
+    {
+        // player1.score = scoring_target.GetComponent<TargetScoring>().Calculate_Score(player1.player_number);
+        //  player2.score = scoring_target.GetComponent<TargetScoring>().Calculate_Score(player2.player_number);
+        scoring_targets[0].GetComponent<TargetScoring>().Calculate_Score();
+        Debug.Log("Player 1 Score: " + player1.score);
+        Debug.Log("Player 2 Score: " + player2.score);
+    }
     public void EndTurn()
     {
-        // UpdatePlayerScores();
         if(player2.alreadySpawned == false ) // player 2 not yet spawned spawn player 2 stone and switch to player 2
         {
             player1.shotsTaken++;
@@ -74,20 +91,13 @@ public class PlayerTurnManager : MonoBehaviour
             SwitchPlayer();
         }
     }
-    public void UpdatePlayerScores()
-    {
-        player1.score = scoring_target.GetComponent<TargetScoring>().Calculate_Score(player1.player_number);
-        player2.score = scoring_target.GetComponent<TargetScoring>().Calculate_Score(player2.player_number);
-        Debug.Log("Player 1 Score: " + player1.score);
-        Debug.Log("Player 2 Score: " + player2.score);
-    }
+    
     public void resetScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
     public void SwitchPlayer()
     {
-        Debug.Log("currentPlayer at switch player statement" + currentPlayer.player_number);
         if(currentPlayer.player_number == 1)
         {
             Debug.Log("SWITCHING TO PLAYER 2");
@@ -106,6 +116,7 @@ public class PlayerTurnManager : MonoBehaviour
         }
         CameraTarget = currentPlayer.curlingStone;
     }
+    
     // public void EndGame()
     // {
     //         RightArrow.SetActive(false);

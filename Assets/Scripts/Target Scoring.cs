@@ -20,6 +20,7 @@ public class TargetScoring : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
         collisions.Add(other.gameObject);
+        other.gameObject.GetComponent<Player>().alreadyEnteredScoringTarget = true; // reset score of player whose stone just entered target
         UnityEngine.Debug.Log("Trigger Detected with " + other.gameObject.name);
        
     }
@@ -56,26 +57,69 @@ public class TargetScoring : MonoBehaviour
         return Vector3.Distance(stonePosition, targetCenter);
     }
     // function that calculates score of player 
-    public int Calculate_Score(int current_player_number)
+    public void Calculate_Score()
     {
-        int score = 0; 
+        Debug.Log("Calculating Score function for Target");
         List<GameObject> tempCollisions = new List<GameObject>(collisions);
         GameObject closestPlayer = Find_Closest_Collision(tempCollisions);
-    while(closestPlayer != null)
+        // if at least 1 player is still in zone upon scoring award points
+        if(closestPlayer != null)
         {
-            Debug.Log("Closest Player is " + closestPlayer.GetComponent<Player>().player_number + "Current player name: " + current_player_number);
-            if(closestPlayer.GetComponent<Player>().player_number == current_player_number)
+            Debug.Log("Closest Player to center is player " + closestPlayer.gameObject.GetComponent<Player>().player_number);
+            closestPlayer.gameObject.GetComponent<Player>().score += 100;  // bonus points for being closest
+            if(tempCollisions.Count > 1) // both players in zone, and award bonus points to player, with least shots taken to get to zone
             {
-                Debug.Log("Adding 1 to player " + current_player_number + " Score");
-                score++;
-                tempCollisions.Remove(closestPlayer);
-                closestPlayer = Find_Closest_Collision(tempCollisions);
+                Debug.Log("Both players in target, awarding bonus points to player with least shots taken");
+                // check who has least amount of shots taken and give them bonus points,
+                if(tempCollisions[0].gameObject.GetComponent<Player>().shotsTaken == tempCollisions[1].gameObject.GetComponent<Player>().shotsTaken)
+                {
+                    // both player shot counts are same, neither player recieves points. 
+                }
+                else if(tempCollisions[0].gameObject.GetComponent<Player>().shotsTaken < tempCollisions[1].gameObject.GetComponent<Player>().shotsTaken)
+                {
+                    tempCollisions[0].gameObject.GetComponent<Player>().score += 50; // bonus points for having fewest shots
+                }
+                else // 
+                {
+                    tempCollisions[1].gameObject.GetComponent<Player>().score += 50; // bonus points for having fewest shots
+                }
             }
             else
             {
-                break;
+                closestPlayer.gameObject.GetComponent<Player>().score += 50; // bonus points awarded to closest player for having least shots taken in zone
+            }
+            // award points for each player in target based on distance from center.
+            foreach(GameObject currentPlayer in tempCollisions)
+            {
+                float current_DistanceAway = Calculate_Distance_From_Center(currentPlayer.transform.position, target_center);
+                Debug.Log("Current Collision Distance from Center: of player " + +currentPlayer.GetComponent<Player>().player_number  + " : " + current_DistanceAway);
+                if(current_DistanceAway < 1)
+                {
+                    currentPlayer.gameObject.GetComponent<Player>().score += 50;
+                }
+                else if(current_DistanceAway < 2)
+                {
+                    currentPlayer.gameObject.GetComponent<Player>().score += 40;
+                }
+                else if(current_DistanceAway < 3)
+                {
+                    currentPlayer.gameObject.GetComponent<Player>().score += 30;
+                }
+                else if(current_DistanceAway < 4)
+                {
+                    currentPlayer.gameObject.GetComponent<Player>().score += 20;
+                }
+                else if(current_DistanceAway < 5)
+                {
+                    currentPlayer.gameObject.GetComponent<Player>().score += 10;
+                }
             }
         }
-    return score;
+        else
+        {
+            Debug.Log("No players in target, no points awarded");
+            return; // if no stones in target, return without updating score
+        }
+           
     }
 }
