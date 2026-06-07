@@ -8,7 +8,6 @@ public class Player : MonoBehaviour
     public bool alreadySpawned;
     public bool alreadyEnteredScoringTarget;
     public bool hasScoredThisTurn;
-    public GameObject curlingStone;
     
   
 

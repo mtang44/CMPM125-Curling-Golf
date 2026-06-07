@@ -58,6 +58,7 @@ public class StoneController : MonoBehaviour
             else
             {
                 isCharging = false;
+                gameObject.GetComponent<Player>().shotsTaken++;
                 ThrowStone();
             }
         }
