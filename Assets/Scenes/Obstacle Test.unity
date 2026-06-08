@@ -6627,7 +6627,7 @@ PrefabInstance:
       objectReference: {fileID: 793563970}
     - target: {fileID: 6139588596198172027, guid: 6d7cab42e5fbe2e43b637080d83b3667, type: 3}
       propertyPath: m_VersionIndex
-      value: 2140
+      value: 2143
       objectReference: {fileID: 0}
     - target: {fileID: 8419335297684368765, guid: 6d7cab42e5fbe2e43b637080d83b3667, type: 3}
       propertyPath: patrolSpline
