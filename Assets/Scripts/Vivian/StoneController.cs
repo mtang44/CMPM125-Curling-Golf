@@ -21,7 +21,8 @@ public class StoneController : MonoBehaviour
     private bool isCharging = false;
     private PlayerTurnManager turnManager;
     [SerializeField] private bool hasBeenThrown = false;
-     private bool hasBeenScored = false;
+    private bool hasBeenScored = false;
+    [SerializeField] private bool isBeingThrownByEnemy = false;
     private bool hasStartedMoving = false;
 
     // CURL SYSTEM
@@ -91,6 +92,11 @@ public class StoneController : MonoBehaviour
         }    
         else 
         {
+            if (isBeingThrownByEnemy)
+            {
+                return;
+            }
+
           
             if(rb.linearVelocity.magnitude > 3.5f)
             {
@@ -113,12 +119,23 @@ public class StoneController : MonoBehaviour
     {
         hasBeenThrown = false;
         hasBeenScored = false;
+        isBeingThrownByEnemy = false;
         hasStartedMoving = false;
 
     }
     public void disableTurn()
     {
         hasBeenThrown = true;
+    }
+
+    public void SetBeingThrownByEnemy(bool isThrownByEnemy)
+    {
+        isBeingThrownByEnemy = isThrownByEnemy;
+
+        if (isThrownByEnemy)
+        {
+            isCurling = false;
+        }
     }
 
     void AimWithMouse()
