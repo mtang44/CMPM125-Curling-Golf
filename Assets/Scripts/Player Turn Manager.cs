@@ -10,6 +10,7 @@ using UnityEditor.Build.Content;
 public class PlayerTurnManager : MonoBehaviour
 {
     public GameObject player1_stone_prefab;
+    public int currentHoleNumber;
     public GameObject player2_stone_prefab;
     //public GameObject ScoreBoard;
     //public GameObject WinnerText;
@@ -38,6 +39,7 @@ public class PlayerTurnManager : MonoBehaviour
     // spawns player 1 and finds uo; 
     void Start()
     {
+        currentHoleNumber = 0; 
         // RightArrow = GameObject.Find("Curve Right");
         // LeftArrow = GameObject.Find("Curve Left");
         main_camera = Camera.main;
@@ -85,6 +87,7 @@ public class PlayerTurnManager : MonoBehaviour
         {
                 Debug.Log("Both players have entered scoring target, calculating score");
                 currentHoleHasBeenScored = true;
+                CameraTarget = scoring_targets[currentHoleNumber];
                 ScoreHole();
         }
        

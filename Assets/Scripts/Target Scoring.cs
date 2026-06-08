@@ -109,21 +109,26 @@ public class TargetScoring : MonoBehaviour
                 if(current_DistanceAway < 1)
                 {
                     currentPlayer.gameObject.GetComponent<Player>().score += 50;
+                    Debug.Log("Player " + currentPlayer.GetComponent<Player>().player_number + ": scored: 50 points" );
                 }
                 else if(current_DistanceAway < 2)
                 {
+                    Debug.Log("Player " + currentPlayer.GetComponent<Player>().player_number + ": scored: 40 points" );
                     currentPlayer.gameObject.GetComponent<Player>().score += 40;
                 }
                 else if(current_DistanceAway < 3)
                 {
+                    Debug.Log("Player " + currentPlayer.GetComponent<Player>().player_number + ": scored: 30 points" );
                     currentPlayer.gameObject.GetComponent<Player>().score += 30;
                 }
                 else if(current_DistanceAway < 4)
                 {
+                    Debug.Log("Player " + currentPlayer.GetComponent<Player>().player_number + ": scored: 20 points" );
                     currentPlayer.gameObject.GetComponent<Player>().score += 20;
                 }
                 else if(current_DistanceAway < 7)
                 {
+                    Debug.Log("Player " + currentPlayer.GetComponent<Player>().player_number + ": scored: 10 points" );
                     currentPlayer.gameObject.GetComponent<Player>().score += 10;
                 }
             }
