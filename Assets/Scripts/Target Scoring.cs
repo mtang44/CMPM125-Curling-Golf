@@ -67,7 +67,6 @@ public class TargetScoring : MonoBehaviour
     // function that calculates score of player 
     public void Calculate_Score()
     {
-        Debug.Log("Calculating Score function for Target");
         List<GameObject> tempCollisions = new List<GameObject>(collisions);
         GameObject closestPlayer = Find_Closest_Collision(tempCollisions);
         // if at least 1 player is still in zone upon scoring award points
@@ -103,9 +102,8 @@ public class TargetScoring : MonoBehaviour
             // award points for each player in target based on distance from center.
             foreach(GameObject currentPlayer in tempCollisions)
             {
-                Debug.Log(currentPlayer.transform.position);
+             
                 float current_DistanceAway = Calculate_Distance_From_Center(currentPlayer.transform.position, target_center);
-                Debug.Log("Current Collision Distance from Center: of player " + +currentPlayer.GetComponent<Player>().player_number  + " : " + current_DistanceAway);
                 if(current_DistanceAway < 1)
                 {
                     currentPlayer.gameObject.GetComponent<Player>().score += 50;

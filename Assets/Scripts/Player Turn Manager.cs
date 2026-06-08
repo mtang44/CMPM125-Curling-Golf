@@ -1,13 +1,12 @@
 using TMPro;
-using Unity.VectorGraphics;
 using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 using System.Collections.Generic;
-using UnityEditor.Build.Content;
+using System.Collections;
 
-public class PlayerTurnManager : MonoBehaviour
+
+public class GameManager: MonoBehaviour
 {
     public GameObject player1_stone_prefab;
     public int currentHoleNumber;
@@ -19,7 +18,6 @@ public class PlayerTurnManager : MonoBehaviour
 
     // public TextMeshProUGUI player1_score_text;
     // public TextMeshProUGUI player2_score_text;
-    public GameObject spawnPosition; 
     
     
     public Camera main_camera;
@@ -29,6 +27,7 @@ public class PlayerTurnManager : MonoBehaviour
     // [SerializeField] private Player player2 = new Player(2);
     private GameObject CameraTarget;
     [SerializeField] private List<GameObject> scoring_targets;
+    [SerializeField] private List<GameObject> holeSpawnPositions;
     private bool currentHoleHasBeenScored = false;
     
     private Vector3 cameraOffset;
@@ -46,7 +45,7 @@ public class PlayerTurnManager : MonoBehaviour
         cameraOffset = CONST_CAMERA_STONE_OFFSET;
 
         
-        player1 = Instantiate(player1_stone_prefab, spawnPosition.transform.position, Quaternion.identity);
+        player1 = Instantiate(player1_stone_prefab, holeSpawnPositions[currentHoleNumber].transform.position, Quaternion.identity);
         player1.GetComponent<Player>().alreadySpawned = true;
         currentPlayer = player1; 
         CameraTarget = player1;
@@ -62,13 +61,15 @@ public class PlayerTurnManager : MonoBehaviour
         // player2_score_text.text = "Player 2 Score: " + player2.score;
     }
     // function to score the hole and update player scores. 
-    public void ScoreHole()
+    public IEnumerator ScoreHoleCoroutine()
     {
         // player1.score = scoring_target.GetComponent<TargetScoring>().Calculate_Score(player1.player_number);
         //  player2.score = scoring_target.GetComponent<TargetScoring>().Calculate_Score(player2.player_number);
-        scoring_targets[0].GetComponent<TargetScoring>().Calculate_Score();
+        scoring_targets[currentHoleNumber].GetComponent<TargetScoring>().Calculate_Score();
         Debug.Log("Player 1 Score: " + player1.GetComponent<Player>().score);
         Debug.Log("Player 2 Score: " + player2.GetComponent<Player>().score);
+        yield return new WaitForSeconds(5f);
+        beginNewHole();
     }
     public void EndTurn()
     {
@@ -76,32 +77,30 @@ public class PlayerTurnManager : MonoBehaviour
 
         if(!player2)
         {
-            player2 = Instantiate(player2_stone_prefab, spawnPosition.transform.position, Quaternion.identity);
+            player2 = Instantiate(player2_stone_prefab, holeSpawnPositions[currentHoleNumber].transform.position, Quaternion.identity);
+            player2.GetComponent<Player>().alreadySpawned = true;
         }
         if(player1.GetComponent<Player>().alreadyEnteredScoringTarget && player2.GetComponent<Player>().alreadyEnteredScoringTarget && !currentHoleHasBeenScored)
         {
                 Debug.Log("Both players have entered scoring target, calculating score");
                 currentHoleHasBeenScored = true;
                 CameraTarget = scoring_targets[currentHoleNumber];
-                ScoreHole();
+                StartCoroutine(ScoreHoleCoroutine());
+                return;
         }
-       
-        else if(player2) // player 2 not yet spawned spawn player 2 stone and switch to player 2
-        {
-         
-            // spawn player 2 stone at beginning of course; 
-           
-            currentPlayer = player2;
-            CameraTarget = player2;
-            player2.GetComponent<Player>().alreadySpawned = true;
-             
-        }
-        else // all players already spawned in game switch to other player
-        {
-            SwitchPlayer();
-        }
+        SwitchPlayer();        
     }
     
+    public void beginNewHole()
+    {
+        currentHoleNumber++;
+        Destroy(player1);
+        Destroy(player2);
+        player1 = Instantiate(player1_stone_prefab, holeSpawnPositions[currentHoleNumber].transform.position, Quaternion.identity);
+        currentPlayer = player1;
+        CameraTarget = currentPlayer;
+        Debug.Log("Moving on to new hole");
+    }
     public void resetScene()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -123,11 +122,10 @@ public class PlayerTurnManager : MonoBehaviour
             player1.GetComponent<StoneController>().reEnableTurn();
             player2.GetComponent<StoneController>().disableTurn();
             currentPlayer = player1;
-            
         }
         CameraTarget = currentPlayer;
     }
-    
+
     // public void EndGame()
     // {
     //         RightArrow.SetActive(false);
