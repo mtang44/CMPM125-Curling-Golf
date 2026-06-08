@@ -167,7 +167,7 @@ MonoBehaviour:
   patrolCycleDuration: 8
   splineDistanceSamples: 120
   sightTrigger: {fileID: 5507244404953383214}
-  chaseAcquireRange: 10
+  chaseAcquireRange: 13
   useNavMesh: 1
   patrolMoveSpeed: 4
   chaseMoveSpeed: 7

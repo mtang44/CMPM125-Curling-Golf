@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Splines;
 using System.Collections.Generic;
+using System.Collections;
 
 public class ThrowerObstacle : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class ThrowerObstacle : MonoBehaviour
         Patrol,
         Chase,
         Carrying,
+        Throwing,
         Cooldown
     }
 
@@ -35,6 +37,7 @@ public class ThrowerObstacle : MonoBehaviour
     [SerializeField] private Transform holdPoint;
     [SerializeField] private float grabDistance = 1.4f;
     [SerializeField] private float carryDuration = 1.2f;
+    [SerializeField] private float throwWindupDuration = 0.35f;
     [SerializeField] private float throwSpeed = 18f;
     [SerializeField] private float throwUpwardBoost = 2f;
     [SerializeField] private Transform throwDirectionReference;
@@ -47,6 +50,7 @@ public class ThrowerObstacle : MonoBehaviour
     private Transform carriedOriginalParent;
     private float carryTimer;
     private float cooldownTimer;
+    private Coroutine throwRoutine;
     private NavMeshAgent navAgent;
     private float nextRepathTime;
     private readonly List<StoneController> sensedTargets = new List<StoneController>();
@@ -62,6 +66,7 @@ public class ThrowerObstacle : MonoBehaviour
         chaseAcquireRange = Mathf.Max(0.1f, chaseAcquireRange);
         maxDistanceFromPath = Mathf.Max(0.1f, maxDistanceFromPath);
         navRepathInterval = Mathf.Max(0.02f, navRepathInterval);
+        throwWindupDuration = Mathf.Max(0f, throwWindupDuration);
         navAgent = GetComponent<NavMeshAgent>();
         if (navAgent != null)
         {
@@ -93,6 +98,9 @@ public class ThrowerObstacle : MonoBehaviour
                 UpdateCarrying();
                 break;
 
+            case EnemyState.Throwing:
+                break;
+
             case EnemyState.Cooldown:
                 UpdateCooldown();
                 break;
@@ -105,6 +113,7 @@ public class ThrowerObstacle : MonoBehaviour
         splineDistanceSamples = Mathf.Max(8, splineDistanceSamples);
         grabDistance = Mathf.Max(0.1f, grabDistance);
         carryDuration = Mathf.Max(0.1f, carryDuration);
+        throwWindupDuration = Mathf.Max(0f, throwWindupDuration);
         throwSpeed = Mathf.Max(0.1f, throwSpeed);
         chaseAcquireRange = Mathf.Max(0.1f, chaseAcquireRange);
         patrolMoveSpeed = Mathf.Max(0.1f, patrolMoveSpeed);
@@ -262,20 +271,24 @@ public class ThrowerObstacle : MonoBehaviour
         carryTimer -= Time.deltaTime;
         if (carryTimer <= 0f)
         {
-            ThrowCarriedStone();
+            if (throwRoutine == null)
+            {
+                throwRoutine = StartCoroutine(ThrowCarriedStoneRoutine());
+            }
         }
     }
 
-    private void ThrowCarriedStone()
+    private IEnumerator ThrowCarriedStoneRoutine()
     {
         if (carriedStoneController == null || carriedStoneBody == null)
         {
             state = EnemyState.Patrol;
-            return;
+            throwRoutine = null;
+            yield break;
         }
 
-        Transform directionSource = throwDirectionReference != null ? throwDirectionReference : transform;
-        Vector3 throwDirection = directionSource.forward;
+        Vector3 throwTargetPoint = throwDirectionReference != null ? throwDirectionReference.position : transform.position + transform.forward;
+        Vector3 throwDirection = throwTargetPoint - transform.position;
         throwDirection.y = 0f;
         if (throwDirection.sqrMagnitude < 0.0001f)
         {
@@ -284,6 +297,20 @@ public class ThrowerObstacle : MonoBehaviour
         }
 
         throwDirection = throwDirection.normalized;
+        state = EnemyState.Throwing;
+
+        Quaternion targetRotation = Quaternion.LookRotation(throwDirection, Vector3.up);
+        float elapsed = 0f;
+        float duration = Mathf.Max(0.01f, throwWindupDuration);
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, t);
+            yield return null;
+        }
+
         Vector3 launchVelocity = throwDirection * throwSpeed + Vector3.up * throwUpwardBoost;
 
         carriedStoneController.transform.SetParent(carriedOriginalParent, true);
@@ -298,6 +325,7 @@ public class ThrowerObstacle : MonoBehaviour
 
         cooldownTimer = postThrowCooldown;
         state = EnemyState.Cooldown;
+        throwRoutine = null;
     }
 
     private void UpdateCooldown()
