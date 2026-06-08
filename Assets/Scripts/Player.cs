@@ -1,7 +1,6 @@
 using UnityEngine;
 
-[System.Serializable]
-public class Player
+public class Player: MonoBehaviour
 {
     public int player_number;
     public int score;

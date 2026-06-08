@@ -57,12 +57,7 @@ public class PlayerTurnManager : MonoBehaviour
        
         if(player1 && player2)
         {
-            if(player1.GetComponent<Player>().alreadyEnteredScoringTarget && player2.GetComponent<Player>().alreadyEnteredScoringTarget && !currentHoleHasBeenScored)
-            {
-                Debug.Log("Both players have entered scoring target, calculating score");
-                currentHoleHasBeenScored = true;
-                ScoreHole();
-            }
+            
         }
       
         main_camera.transform.position = Vector3.MoveTowards(main_camera.transform.position, CameraTarget.transform.position + cameraOffset, Time.deltaTime * 100);
@@ -80,11 +75,20 @@ public class PlayerTurnManager : MonoBehaviour
     }
     public void EndTurn()
     {
+        Debug.Log("Ending Turn");
+
         if(!player2)
         {
             player2 = Instantiate(player2_stone_prefab, spawnPosition.transform.position, Quaternion.identity);
         }
-        if(player2) // player 2 not yet spawned spawn player 2 stone and switch to player 2
+        if(player1.GetComponent<Player>().alreadyEnteredScoringTarget && player2.GetComponent<Player>().alreadyEnteredScoringTarget && !currentHoleHasBeenScored)
+        {
+                Debug.Log("Both players have entered scoring target, calculating score");
+                currentHoleHasBeenScored = true;
+                ScoreHole();
+        }
+       
+        else if(player2) // player 2 not yet spawned spawn player 2 stone and switch to player 2
         {
          
             // spawn player 2 stone at beginning of course; 
@@ -106,6 +110,7 @@ public class PlayerTurnManager : MonoBehaviour
     }
     public void SwitchPlayer()
     {
+       
         if(currentPlayer.GetComponent<Player>().player_number == 1)
         {
             Debug.Log("SWITCHING TO PLAYER 2");
