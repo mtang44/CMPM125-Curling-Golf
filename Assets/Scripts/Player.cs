@@ -5,7 +5,6 @@ public class Player: MonoBehaviour
     public int player_number;
     public int score;
     public int shotsTaken;
-    public bool alreadySpawned;
     public bool alreadyEnteredScoringTarget;
     public bool hasScoredThisTurn;
     
@@ -16,7 +15,6 @@ public class Player: MonoBehaviour
         player_number = current_player_number;
         score = 0;
         shotsTaken = 0;
-        alreadyEnteredScoringTarget = false;
-        alreadySpawned = false;  
+        alreadyEnteredScoringTarget = false; 
     }
 }
