@@ -115,6 +115,9 @@ MonoBehaviour:
   maxForce: 110
   chargeSpeed: 30
   hasBeenThrown: 0
+  hasEndedTurn: 0
+  isBeingThrownByEnemy: 0
+  hasStartedMoving: 0
   curlStrength: 15
   maxCurlForce: 5
 --- !u!114 &7585629057218048300
@@ -132,9 +135,9 @@ MonoBehaviour:
   player_number: 1
   score: 0
   shotsTaken: 0
-  alreadySpawned: 0
   alreadyEnteredScoringTarget: 0
   hasScoredThisTurn: 0
+  pointRewardList: []
 --- !u!54 &2232379067384028725
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -351,7 +354,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 248480a8d78130841b0f1db53e3c3d14, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -383,8 +386,8 @@ TrailRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.012130737
-        value: 0.086639404
+        time: 0
+        value: 0.49879572
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -396,7 +399,7 @@ TrailRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0, g: 0.019177437, b: 1, a: 1}
+      key0: {r: 1, g: 1, b: 1, a: 1}
       key1: {r: 1, g: 1, b: 1, a: 1}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
@@ -421,7 +424,7 @@ TrailRenderer:
       atime6: 0
       atime7: 0
       m_Mode: 0
-      m_ColorSpace: -1
+      m_ColorSpace: 0
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0

@@ -38,6 +38,11 @@ public class StoneController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         Ir = GetComponent<LineRenderer>();
         cam = Camera.main;
+
+        if (Ir != null)
+        {
+            Ir.enabled = true;
+        }
     }
 
     void OnPoint(InputValue value)
@@ -125,10 +130,20 @@ public class StoneController : MonoBehaviour
         isBeingThrownByEnemy = false;
         hasStartedMoving = false;
 
+        if (Ir != null)
+        {
+            Ir.enabled = true;
+        }
+
     }
     public void disableTurn()
     {
         hasBeenThrown = true;
+
+        if (Ir != null)
+        {
+            Ir.enabled = false;
+        }
     }
 
     public void SetBeingThrownByEnemy(bool isThrownByEnemy)
@@ -200,6 +215,11 @@ public class StoneController : MonoBehaviour
         currentForce = 0f;
         isCharging = false;
         hasBeenThrown = true;
+
+        if (Ir != null)
+        {
+            Ir.enabled = false;
+        }
         
         
     }

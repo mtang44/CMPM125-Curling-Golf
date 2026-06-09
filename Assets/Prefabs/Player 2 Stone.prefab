@@ -295,6 +295,9 @@ MonoBehaviour:
   maxForce: 110
   chargeSpeed: 30
   hasBeenThrown: 0
+  hasEndedTurn: 0
+  isBeingThrownByEnemy: 0
+  hasStartedMoving: 0
   curlStrength: 5
   maxCurlForce: 2
 --- !u!114 &5439899124115988695
@@ -312,9 +315,9 @@ MonoBehaviour:
   player_number: 2
   score: 0
   shotsTaken: 0
-  alreadySpawned: 0
   alreadyEnteredScoringTarget: 0
   hasScoredThisTurn: 0
+  pointRewardList: []
 --- !u!136 &563404362867099419
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -531,7 +534,7 @@ TrailRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 0}
+  - {fileID: 2100000, guid: 6b3ccdb70b9b76e4c9350a3c7c7fb991, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -563,8 +566,8 @@ TrailRenderer:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
-        time: 0.012130737
-        value: 0.06314087
+        time: 0
+        value: 0.49557495
         inSlope: 0
         outSlope: 0
         tangentMode: 0
