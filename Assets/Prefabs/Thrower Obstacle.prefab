@@ -177,6 +177,7 @@ MonoBehaviour:
   holdPoint: {fileID: 6363105514776159415}
   grabDistance: 1.4
   carryDuration: 1.2
+  throwWindupDuration: 0.35
   throwSpeed: 18
   throwUpwardBoost: 2
   throwDirectionReference: {fileID: 0}

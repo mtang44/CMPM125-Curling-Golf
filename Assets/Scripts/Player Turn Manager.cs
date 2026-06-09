@@ -12,6 +12,7 @@ public class GameManager: MonoBehaviour
     public int currentHoleNumber;
     public GameObject player2_stone_prefab;
     public Camera main_camera;
+    private OrbitalCamera orbitalCamera;
     private GameObject player1;
     private GameObject player2;
     private GameObject cameraTarget;
@@ -38,13 +39,15 @@ public class GameManager: MonoBehaviour
         // RightArrow = GameObject.Find("Curve Right");
         // LeftArrow = GameObject.Find("Curve Left");
         main_camera = Camera.main;
+        orbitalCamera = main_camera != null ? main_camera.GetComponent<OrbitalCamera>() : null;
         cameraOffset = CONST_CAMERA_STONE_OFFSET;
 
         
         player1 = Instantiate(player1_stone_prefab, holeSpawnPositions[currentHoleNumber].transform.position, Quaternion.identity);
         currentPlayer = player1; 
         otherPlayer = player2;
-        cameraTarget = currentPlayer;;
+        cameraTarget = currentPlayer;
+        UpdateCameraTarget();
    
     }
 
@@ -52,7 +55,10 @@ public class GameManager: MonoBehaviour
     void Update()
     {
         // Debug.Log("Current Player: " + currentPlayer.player_number);
-        main_camera.transform.position = Vector3.MoveTowards(main_camera.transform.position, cameraTarget.transform.position + cameraOffset, Time.deltaTime * 100);
+        if (orbitalCamera == null && main_camera != null && cameraTarget != null)
+        {
+            main_camera.transform.position = Vector3.MoveTowards(main_camera.transform.position, cameraTarget.transform.position + cameraOffset, Time.deltaTime * 100);
+        }
         // player1_score_text.text = "Player 1 Score: " + player1.score;
         // player2_score_text.text = "Player 2 Score: " + player2.score;
     }
@@ -106,6 +112,7 @@ public class GameManager: MonoBehaviour
             Debug.Log("Both players have entered scoring target, calculating score");
             currentHoleHasBeenScored = true;
             cameraTarget = scoring_targets[currentHoleNumber];
+            UpdateCameraTarget();
             StartCoroutine(ScoreHoleCoroutine());
             return;
         }
@@ -122,6 +129,7 @@ public class GameManager: MonoBehaviour
         player1 = Instantiate(player1_stone_prefab, holeSpawnPositions[currentHoleNumber].transform.position, Quaternion.identity);
         currentPlayer = player1;
         cameraTarget = currentPlayer;
+        UpdateCameraTarget();
     }
     public void resetScene()
     {
@@ -154,6 +162,15 @@ public class GameManager: MonoBehaviour
                 otherPlayer = player2;
         }
         cameraTarget = currentPlayer;
+        UpdateCameraTarget();
+    }
+
+    private void UpdateCameraTarget()
+    {
+        if (orbitalCamera != null)
+        {
+            orbitalCamera.SetTarget(cameraTarget != null ? cameraTarget.transform : null);
+        }
     }
 
     // public void EndGame()

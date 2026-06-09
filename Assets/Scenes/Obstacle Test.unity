@@ -429,16 +429,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2011e826a49e6324db2d0bbdf4bdf460, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerTurnManager
-  player1_stone: {fileID: 2387939817240537075, guid: 8863aa4499b06194cb7e0b8f9c6e17d5, type: 3}
-  player2_stone: {fileID: 5755702748703871304, guid: 832060f99d611c749a560c0b21c4c886, type: 3}
-  spawnPosition: {fileID: 483662704}
+  player1_stone_prefab: {fileID: 0}
+  currentHoleNumber: 0
+  player2_stone_prefab: {fileID: 0}
   main_camera: {fileID: 1844167093}
-  currentPlayer:
-    player_number: 0
-    score: 0
-    shotsTaken: 0
-    alreadySpawned: 0
-    curlingStone: {fileID: 0}
+  scoring_targets: []
+  holeSpawnPositions: []
+  player1_score_text: {fileID: 0}
+  player2_score_text: {fileID: 0}
+  currentPlayer: {fileID: 0}
+  otherPlayer: {fileID: 0}
 --- !u!4 &112977882
 Transform:
   m_ObjectHideFlags: 0
@@ -6627,7 +6627,7 @@ PrefabInstance:
       objectReference: {fileID: 793563970}
     - target: {fileID: 6139588596198172027, guid: 6d7cab42e5fbe2e43b637080d83b3667, type: 3}
       propertyPath: m_VersionIndex
-      value: 2143
+      value: 2149
       objectReference: {fileID: 0}
     - target: {fileID: 8419335297684368765, guid: 6d7cab42e5fbe2e43b637080d83b3667, type: 3}
       propertyPath: patrolSpline
