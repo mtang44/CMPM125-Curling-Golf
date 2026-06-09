@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Player: MonoBehaviour
@@ -8,7 +9,7 @@ public class Player: MonoBehaviour
     public bool alreadyEnteredScoringTarget;
     public bool hasScoredThisTurn;
     
-  
+    public List<string> pointRewardList;
 
     public Player(int current_player_number)
     {
