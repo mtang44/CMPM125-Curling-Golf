@@ -23,11 +23,11 @@ public class GameManager: MonoBehaviour
     private Vector3 CONST_CAMERA_SCOREBOARD_OFFSET = new Vector3(0,10,30);
     //public GameObject ScoreBoard;
     //public GameObject WinnerText;
-    // public GameObject RightArrow;
-    // public GameObject LeftArrow;
+    //public GameObject RightArrow;
+    //public GameObject LeftArrow;
 
-    // public TextMeshProUGUI player1_score_text;
-    // public TextMeshProUGUI player2_score_text;
+     public GameObject player1_score_text;
+     public GameObject player2_score_text;
 
     [SerializeField] private GameObject currentPlayer;
     [SerializeField]private GameObject otherPlayer;
@@ -62,10 +62,31 @@ public class GameManager: MonoBehaviour
         // player1.score = scoring_target.GetComponent<TargetScoring>().Calculate_Score(player1.player_number);
         //  player2.score = scoring_target.GetComponent<TargetScoring>().Calculate_Score(player2.player_number);
         scoring_targets[currentHoleNumber].GetComponent<TargetScoring>().Calculate_Score();
-        Debug.Log("Player 1 Score: " + player1.GetComponent<Player>().score);
-        Debug.Log("Player 2 Score: " + player2.GetComponent<Player>().score);
-        yield return new WaitForSeconds(5f);
+        StartCoroutine(DisplayScoreCoroutine());
+        yield return new WaitForSeconds(10f);
+        player1_score_text.SetActive(false);
+        player2_score_text.SetActive(false);
         beginNewHole();
+    }
+    public IEnumerator DisplayScoreCoroutine()
+    {
+
+        player1_score_text.SetActive(true);
+       
+        foreach(string pointAward in player1.GetComponent<Player>().pointRewardList)
+        {
+            player1_score_text.GetComponent<TextMeshProUGUI>().text = pointAward; 
+            yield return new WaitForSeconds(2f);
+        }
+        yield return new WaitForSeconds(5f);
+         player1_score_text.SetActive(false);
+         player2_score_text.SetActive(true);
+        foreach(string pointAward in player2.GetComponent<Player>().pointRewardList)
+        {
+            player2_score_text.GetComponent<TextMeshProUGUI>().text = pointAward; 
+            yield return new WaitForSeconds(2f);
+        }
+        yield return null;
     }
     public void EndTurn()
     {
