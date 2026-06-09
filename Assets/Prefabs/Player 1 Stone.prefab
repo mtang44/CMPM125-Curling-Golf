@@ -20,7 +20,7 @@ GameObject:
   - component: {fileID: 7634690290936766028}
   m_Layer: 0
   m_Name: Player 1 Stone
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -131,7 +131,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Player
   player_number: 1
   score: 0
-  stones_remaining: 4
+  shotsTaken: 0
+  alreadySpawned: 0
+  alreadyEnteredScoringTarget: 0
+  hasScoredThisTurn: 0
 --- !u!54 &2232379067384028725
 Rigidbody:
   m_ObjectHideFlags: 0

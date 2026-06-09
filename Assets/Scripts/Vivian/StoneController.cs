@@ -19,11 +19,11 @@ public class StoneController : MonoBehaviour
 
     private float currentForce = 0f;
     private bool isCharging = false;
-    private PlayerTurnManager turnManager;
+    private GameManager gameManager;
     [SerializeField] private bool hasBeenThrown = false;
-    private bool hasBeenScored = false;
+    [SerializeField] private bool hasEndedTurn = false;
     [SerializeField] private bool isBeingThrownByEnemy = false;
-    private bool hasStartedMoving = false;
+    [SerializeField]  private bool hasStartedMoving = false;
 
     // CURL SYSTEM
     private bool isCurling = false;
@@ -33,7 +33,7 @@ public class StoneController : MonoBehaviour
 
     void Start()
     {
-        turnManager = GameObject.Find("Game Manager").gameObject.GetComponent<PlayerTurnManager>();
+        gameManager = GameObject.Find("Game Manager").gameObject.GetComponent<GameManager>();
         hasBeenThrown = false;
         rb = GetComponent<Rigidbody>();
         Ir = GetComponent<LineRenderer>();
@@ -59,6 +59,7 @@ public class StoneController : MonoBehaviour
             else
             {
                 isCharging = false;
+                gameObject.GetComponent<Player>().shotsTaken++;
                 ThrowStone();
             }
         }
@@ -80,44 +81,47 @@ public class StoneController : MonoBehaviour
     void Update()
     {
 
-        if(!hasBeenThrown )
-        {
-            AimWithMouse();
-            
-            HandleCharging();
-            UpdateAimLine();
-             
-            // Debug.Log("THROW FORCE: " + currentForce);
-        }    
-        else 
-        {
-            if (isBeingThrownByEnemy)
+       
+            if(!hasBeenThrown)
             {
-                return;
-            }
-
-          
-            if(rb.linearVelocity.magnitude > 3.5f)
+                AimWithMouse();
+                
+                HandleCharging();
+                UpdateAimLine();
+                    
+                // Debug.Log("THROW FORCE: " + currentForce);
+            }    
+            else 
             {
-                HandleCurl();
+                if (isBeingThrownByEnemy)
+                {
+                    return;
+                }
+                if(rb.linearVelocity.magnitude > 3.5f)
+                {
+                    HandleCurl();
+                }
+                if(rb.linearVelocity.magnitude > 0.5f)
+                {
+                    hasStartedMoving = true;
+                }
+                else if(hasStartedMoving && !hasEndedTurn && rb.linearVelocity.magnitude < 0.1f )
+                {
+                    Debug.Log("Running EndTurn function");
+                    // Destroy(Ir);
+                    hasEndedTurn = true;
+                    gameManager.EndTurn();
+                    
+                   
+                }
+                
             }
-            if(rb.linearVelocity.magnitude > 0.5f)
-            {
-                hasStartedMoving = true;
-            }
-            else if(hasStartedMoving && !hasBeenScored && rb.linearVelocity.magnitude < 0.1f)
-            {
-                // Destroy(Ir);
-                turnManager.EndTurn();
-                hasBeenScored = true;
-            }
-            
-        }
     }
     public void reEnableTurn()
     {
+        Debug.Log("Reenabling current player turn");
         hasBeenThrown = false;
-        hasBeenScored = false;
+        hasEndedTurn = false;
         isBeingThrownByEnemy = false;
         hasStartedMoving = false;
 

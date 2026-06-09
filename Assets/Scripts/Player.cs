@@ -1,13 +1,13 @@
 using UnityEngine;
 
-[System.Serializable]
-public class Player
+public class Player: MonoBehaviour
 {
     public int player_number;
     public int score;
     public int shotsTaken;
-    public bool alreadySpawned;
-    public GameObject curlingStone;
+    public bool alreadyEnteredScoringTarget;
+    public bool hasScoredThisTurn;
+    
   
 
     public Player(int current_player_number)
@@ -15,6 +15,6 @@ public class Player
         player_number = current_player_number;
         score = 0;
         shotsTaken = 0;
-        alreadySpawned = false;  
+        alreadyEnteredScoringTarget = false; 
     }
 }
