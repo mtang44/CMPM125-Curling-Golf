@@ -31,8 +31,14 @@ public class GameManager: MonoBehaviour
      public GameObject player1_score_text;
      public GameObject player2_score_text;
 
+    [Header("Score Display Input")]
+    [SerializeField] private float clickBufferAfterAutoAdvance = 0.2f;
+    [SerializeField] private float clickBufferAfterManualAdvance = 0.08f;
+
     [SerializeField] private GameObject currentPlayer;
     [SerializeField]private GameObject otherPlayer;
+    private float nextAllowedScoreClickTime;
+    private bool waitForScoreClickRelease;
     // spawns player 1 and finds uo; 
     void Start()
     {
@@ -76,6 +82,8 @@ public class GameManager: MonoBehaviour
     }
     public IEnumerator DisplayScoreCoroutine()
     {
+        BeginScoreInputSession();
+
         TextMeshProUGUI p1Text = player1_score_text.GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI p2Text = player2_score_text.GetComponent<TextMeshProUGUI>();
 
@@ -122,7 +130,7 @@ public class GameManager: MonoBehaviour
         float elapsed = 0f;
         while (elapsed < seconds)
         {
-            if (IsAdvanceClickPressed())
+            if (TryConsumeScoreAdvanceClick(clickBufferAfterManualAdvance))
             {
                 yield break;
             }
@@ -130,20 +138,72 @@ public class GameManager: MonoBehaviour
             elapsed += Time.deltaTime;
             yield return null;
         }
+
+        LockScoreClicks(clickBufferAfterAutoAdvance);
     }
 
     private IEnumerator WaitForClick()
     {
-        while (!IsAdvanceClickPressed())
+        while (!TryConsumeScoreAdvanceClick(clickBufferAfterManualAdvance))
         {
             yield return null;
         }
     }
 
-    private bool IsAdvanceClickPressed()
+    private void BeginScoreInputSession()
+    {
+        waitForScoreClickRelease = IsAnyScoreAdvanceButtonHeld();
+        nextAllowedScoreClickTime = Time.time + clickBufferAfterAutoAdvance;
+    }
+
+    private void LockScoreClicks(float duration)
+    {
+        nextAllowedScoreClickTime = Time.time + Mathf.Max(0f, duration);
+        waitForScoreClickRelease = IsAnyScoreAdvanceButtonHeld();
+    }
+
+    private bool TryConsumeScoreAdvanceClick(float postConsumeLock)
+    {
+        if (Time.time < nextAllowedScoreClickTime)
+        {
+            return false;
+        }
+
+        if (waitForScoreClickRelease)
+        {
+            if (IsAnyScoreAdvanceButtonHeld())
+            {
+                return false;
+            }
+
+            waitForScoreClickRelease = false;
+        }
+
+        Mouse mouse = Mouse.current;
+        if (mouse == null)
+        {
+            return false;
+        }
+
+        bool clicked = mouse.leftButton.wasPressedThisFrame || mouse.rightButton.wasPressedThisFrame;
+        if (!clicked)
+        {
+            return false;
+        }
+
+        LockScoreClicks(postConsumeLock);
+        return true;
+    }
+
+    private bool IsAnyScoreAdvanceButtonHeld()
     {
         Mouse mouse = Mouse.current;
-        return mouse != null && (mouse.leftButton.wasPressedThisFrame || mouse.rightButton.wasPressedThisFrame);
+        if (mouse == null)
+        {
+            return false;
+        }
+
+        return mouse.leftButton.isPressed || mouse.rightButton.isPressed;
     }
     public void EndTurn()
     {
