@@ -4,6 +4,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.InputSystem;
 
 
 public class GameManager: MonoBehaviour
@@ -68,34 +69,81 @@ public class GameManager: MonoBehaviour
         // player1.score = scoring_target.GetComponent<TargetScoring>().Calculate_Score(player1.player_number);
         //  player2.score = scoring_target.GetComponent<TargetScoring>().Calculate_Score(player2.player_number);
         scoring_targets[currentHoleNumber].GetComponent<TargetScoring>().Calculate_Score();
-        StartCoroutine(DisplayScoreCoroutine());
-        yield return new WaitForSeconds(10f);
+        yield return StartCoroutine(DisplayScoreCoroutine());
         player1_score_text.SetActive(false);
         player2_score_text.SetActive(false);
         beginNewHole();
     }
     public IEnumerator DisplayScoreCoroutine()
     {
+        TextMeshProUGUI p1Text = player1_score_text.GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI p2Text = player2_score_text.GetComponent<TextMeshProUGUI>();
+
+        p1Text.text = "";
+        p2Text.text = "";
 
         player1_score_text.SetActive(true);
-       
-        foreach(string pointAward in player1.GetComponent<Player>().pointRewardList)
+        yield return StartCoroutine(DisplaySinglePlayerScore(player1, p1Text, "Player 1"));
+
+        player1_score_text.SetActive(false);
+        player2_score_text.SetActive(true);
+        yield return StartCoroutine(DisplaySinglePlayerScore(player2, p2Text, "Player 2"));
+
+        p1Text.text = "";
+        p2Text.text = "";
+    }
+
+    private IEnumerator DisplaySinglePlayerScore(GameObject playerObject, TextMeshProUGUI scoreText, string label)
+    {
+        Player playerData = playerObject.GetComponent<Player>();
+        scoreText.text = label + "\n";
+
+        List<string> rewards = playerData.pointRewardList;
+        if (rewards == null || rewards.Count == 0)
         {
-            player1_score_text.GetComponent<TextMeshProUGUI>().text += pointAward; 
-            yield return new WaitForSeconds(2f);
+            scoreText.text += "\nNo Points Awarded";
+            yield return WaitForClickOrSeconds(1.2f);
         }
-        yield return new WaitForSeconds(3f);
-         player1_score_text.SetActive(false);
-         player2_score_text.SetActive(true);
-        foreach(string pointAward in player2.GetComponent<Player>().pointRewardList)
+        else
         {
-            player2_score_text.GetComponent<TextMeshProUGUI>().text += pointAward; 
-            yield return new WaitForSeconds(2f);
+            for (int i = 0; i < rewards.Count; i++)
+            {
+                scoreText.text += rewards[i];
+                yield return WaitForClickOrSeconds(2f);
+            }
         }
-        yield return new WaitForSeconds(3f);
-        player1_score_text.GetComponent<TextMeshProUGUI>().text = ""; 
-        player2_score_text.GetComponent<TextMeshProUGUI>().text = "";
-        yield return null;
+
+        scoreText.text += "\n\nTotal: " + playerData.score + " Points";
+        yield return WaitForClick();
+    }
+
+    private IEnumerator WaitForClickOrSeconds(float seconds)
+    {
+        float elapsed = 0f;
+        while (elapsed < seconds)
+        {
+            if (IsAdvanceClickPressed())
+            {
+                yield break;
+            }
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+    }
+
+    private IEnumerator WaitForClick()
+    {
+        while (!IsAdvanceClickPressed())
+        {
+            yield return null;
+        }
+    }
+
+    private bool IsAdvanceClickPressed()
+    {
+        Mouse mouse = Mouse.current;
+        return mouse != null && (mouse.leftButton.wasPressedThisFrame || mouse.rightButton.wasPressedThisFrame);
     }
     public void EndTurn()
     {
