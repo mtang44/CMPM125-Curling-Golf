@@ -75,17 +75,20 @@ public class GameManager: MonoBehaviour
        
         foreach(string pointAward in player1.GetComponent<Player>().pointRewardList)
         {
-            player1_score_text.GetComponent<TextMeshProUGUI>().text = pointAward; 
+            player1_score_text.GetComponent<TextMeshProUGUI>().text += pointAward; 
             yield return new WaitForSeconds(2f);
         }
-        yield return new WaitForSeconds(5f);
+        yield return new WaitForSeconds(3f);
          player1_score_text.SetActive(false);
          player2_score_text.SetActive(true);
         foreach(string pointAward in player2.GetComponent<Player>().pointRewardList)
         {
-            player2_score_text.GetComponent<TextMeshProUGUI>().text = pointAward; 
+            player2_score_text.GetComponent<TextMeshProUGUI>().text += pointAward; 
             yield return new WaitForSeconds(2f);
         }
+        yield return new WaitForSeconds(3f);
+        player1_score_text.GetComponent<TextMeshProUGUI>().text = ""; 
+        player2_score_text.GetComponent<TextMeshProUGUI>().text = "";
         yield return null;
     }
     public void EndTurn()

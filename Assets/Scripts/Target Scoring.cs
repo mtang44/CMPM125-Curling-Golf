@@ -74,7 +74,7 @@ public class TargetScoring : MonoBehaviour
         {
             Debug.Log("Closest Player to center is player " + closestPlayer.gameObject.GetComponent<Player>().player_number);
             closestPlayer.gameObject.GetComponent<Player>().score += 100;  // bonus points for being closest
-            closestPlayer.gameObject.GetComponent<Player>().pointRewardList.Add("Closest Player Bonus: + 100 Points");
+            closestPlayer.gameObject.GetComponent<Player>().pointRewardList.Add("\nClosest Player Bonus: + 100 Points");
             if(tempCollisions.Count > 1) // both players in zone, and award bonus points to player, with least shots taken to get to zone
             {
                 Debug.Log("Both players in target, awarding bonus points to player with least shots taken");
@@ -88,12 +88,12 @@ public class TargetScoring : MonoBehaviour
                 {
                     Debug.Log("50 bonus points awarded to player"  +  tempCollisions[0].gameObject.GetComponent<Player>().player_number + " for least amount of shots");
                     tempCollisions[0].gameObject.GetComponent<Player>().score += 50; // bonus points for having fewest shots
-                    tempCollisions[0].gameObject.GetComponent<Player>().pointRewardList.Add(" Fewest # Shots Bonus: + 50 Points");
+                    tempCollisions[0].gameObject.GetComponent<Player>().pointRewardList.Add("\nFewest # Shots Bonus: + 50 Points");
                 }
                 else // 
                 {
                     tempCollisions[1].gameObject.GetComponent<Player>().score += 50; // bonus points for having fewest shots
-                    tempCollisions[1].gameObject.GetComponent<Player>().pointRewardList.Add("Fewest # Shots Bonus: + 50 Points");
+                    tempCollisions[1].gameObject.GetComponent<Player>().pointRewardList.Add("\nFewest # Shots Bonus: + 50 Points");
                     Debug.Log("50 bonus points awarded to player"  +  tempCollisions[1].gameObject.GetComponent<Player>().player_number + " for least amount of shots");
                 }
             }
@@ -101,7 +101,7 @@ public class TargetScoring : MonoBehaviour
             {
                 Debug.Log("Only 1 player in goal awarding player "+ tempCollisions[0].gameObject.GetComponent<Player>().player_number + " for least amount of shots");
                 closestPlayer.gameObject.GetComponent<Player>().score += 50; // bonus points awarded to closest player for having least shots taken in zone
-                closestPlayer.gameObject.GetComponent<Player>().pointRewardList.Add("Fewest # Shots Bonus: + 50 Points");
+                closestPlayer.gameObject.GetComponent<Player>().pointRewardList.Add("\nFewest # Shots Bonus: + 50 Points");
             }
             // award points for each player in target based on distance from center.
             foreach(GameObject currentPlayer in tempCollisions)
@@ -111,33 +111,33 @@ public class TargetScoring : MonoBehaviour
                 if(current_DistanceAway < 1)
                 {
                     currentPlayer.gameObject.GetComponent<Player>().score += 50;
-                    currentPlayer.gameObject.GetComponent<Player>().pointRewardList.Add("Distance Score: + 50 Points");
+                    currentPlayer.gameObject.GetComponent<Player>().pointRewardList.Add("\nDistance Score: + 50 Points");
                 }
                 else if(current_DistanceAway < 2)
                 {
                     Debug.Log("Player " + currentPlayer.GetComponent<Player>().player_number + ": scored: 40 points" );
                     currentPlayer.gameObject.GetComponent<Player>().score += 40;
-                    currentPlayer.gameObject.GetComponent<Player>().pointRewardList.Add("Distance Score: + 40 Points");
+                    currentPlayer.gameObject.GetComponent<Player>().pointRewardList.Add("\nDistance Score: + 40 Points");
                 }
                 else if(current_DistanceAway < 3)
                 {
                     Debug.Log("Player " + currentPlayer.GetComponent<Player>().player_number + ": scored: 30 points" );
                      currentPlayer.gameObject.GetComponent<Player>().score += 30;
-                     currentPlayer.gameObject.GetComponent<Player>().pointRewardList.Add("Distance Score: + 30 Points");
+                     currentPlayer.gameObject.GetComponent<Player>().pointRewardList.Add("\nDistance Score: + 30 Points");
                 }
                 else if(current_DistanceAway < 4)
                 {
                     currentPlayer.gameObject.GetComponent<Player>().score += 20;
-                    currentPlayer.gameObject.GetComponent<Player>().pointRewardList.Add("Distance Score: + 20 Points");
+                    currentPlayer.gameObject.GetComponent<Player>().pointRewardList.Add(" \nDistance Score: + 20 Points");
                 }
                 else if(current_DistanceAway < 7)
                 {
                     currentPlayer.gameObject.GetComponent<Player>().score += 10;
-                    currentPlayer.gameObject.GetComponent<Player>().pointRewardList.Add("Distance Score: + 10 Points");
+                    currentPlayer.gameObject.GetComponent<Player>().pointRewardList.Add("\nDistance Score: + 10 Points");
                 }
                 else
                 {
-                    currentPlayer.gameObject.GetComponent<Player>().pointRewardList.Add("Distance Score: + 0 Points");
+                    currentPlayer.gameObject.GetComponent<Player>().pointRewardList.Add("\nDistance Score: + 0 Points");
                 }
             }
         }
