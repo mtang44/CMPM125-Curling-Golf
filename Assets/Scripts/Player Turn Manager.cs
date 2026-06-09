@@ -32,7 +32,6 @@ public class GameManager: MonoBehaviour
      public GameObject player1_score_text;
      public GameObject player2_score_text;
      public GameObject leftClickIcon;
-     public GameObject scoreBoard;
 
      
 
