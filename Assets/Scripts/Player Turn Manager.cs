@@ -71,7 +71,7 @@ public class GameManager: MonoBehaviour
     {
         Debug.Log("Ending Turn");
 
-        if(!player2)
+        if(!player2) // if player 2 does not exist create player 2
         {
             player2 = Instantiate(player2_stone_prefab, holeSpawnPositions[currentHoleNumber].transform.position, Quaternion.identity);
             otherPlayer = player2;
@@ -92,6 +92,7 @@ public class GameManager: MonoBehaviour
     public void beginNewHole()
     {
         currentHoleNumber++;
+        currentHoleHasBeenScored = false;
         Destroy(player1);
         Destroy(player2);
         player1 = Instantiate(player1_stone_prefab, holeSpawnPositions[currentHoleNumber].transform.position, Quaternion.identity);
