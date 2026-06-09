@@ -13,6 +13,8 @@ public class GameManager: MonoBehaviour
     public int currentHoleNumber;
     public GameObject player2_stone_prefab;
     public Camera main_camera;
+    [SerializeField] public static int player1_Combined_Score;
+    [SerializeField] public static int player2_Combined_Score;
     private OrbitalCamera orbitalCamera;
     private GameObject player1;
     private GameObject player2;
@@ -20,6 +22,8 @@ public class GameManager: MonoBehaviour
     [SerializeField] private List<GameObject> scoring_targets;
     [SerializeField] private List<GameObject> holeSpawnPositions;
     private bool currentHoleHasBeenScored = false;
+    
+    [Header("Camera Variables")]
     private Vector3 cameraOffset;
     private Vector3 CONST_CAMERA_STONE_OFFSET = new Vector3(0,7,8);
     private Vector3 CONST_CAMERA_SCOREBOARD_OFFSET = new Vector3(0,10,30);
@@ -28,15 +32,19 @@ public class GameManager: MonoBehaviour
     //public GameObject RightArrow;
     //public GameObject LeftArrow;
 
-     public GameObject player1_score_text;
-     public GameObject player2_score_text;
+   
 
     [Header("Score Display Input")]
+    public GameObject player1_score_text;
+     public GameObject player2_score_text;
+     public GameObject score_background;
+     public GameObject LClickIcon;
     [SerializeField] private float clickBufferAfterAutoAdvance = 0.2f;
     [SerializeField] private float clickBufferAfterManualAdvance = 0.08f;
 
     [SerializeField] private GameObject currentPlayer;
     [SerializeField]private GameObject otherPlayer;
+    
     private float nextAllowedScoreClickTime;
     private bool waitForScoreClickRelease;
     // spawns player 1 and finds uo; 
@@ -78,12 +86,14 @@ public class GameManager: MonoBehaviour
         yield return StartCoroutine(DisplayScoreCoroutine());
         player1_score_text.SetActive(false);
         player2_score_text.SetActive(false);
+        score_background.SetActive(false);
+        LClickIcon.SetActive(false);
         beginNewHole();
     }
     public IEnumerator DisplayScoreCoroutine()
     {
         BeginScoreInputSession();
-
+          score_background.SetActive(true);
         TextMeshProUGUI p1Text = player1_score_text.GetComponent<TextMeshProUGUI>();
         TextMeshProUGUI p2Text = player2_score_text.GetComponent<TextMeshProUGUI>();
 
@@ -91,14 +101,17 @@ public class GameManager: MonoBehaviour
         p2Text.text = "";
 
         player1_score_text.SetActive(true);
+        LClickIcon.SetActive(true);
         yield return StartCoroutine(DisplaySinglePlayerScore(player1, p1Text, "Player 1"));
 
         player1_score_text.SetActive(false);
         player2_score_text.SetActive(true);
+        
         yield return StartCoroutine(DisplaySinglePlayerScore(player2, p2Text, "Player 2"));
 
         p1Text.text = "";
         p2Text.text = "";
+        
     }
 
     private IEnumerator DisplaySinglePlayerScore(GameObject playerObject, TextMeshProUGUI scoreText, string label)
@@ -230,8 +243,14 @@ public class GameManager: MonoBehaviour
     
     public void beginNewHole()
     {
+        if(currentHoleNumber > holeSpawnPositions.Count)
+        {
+            EndGame();
+        }
         currentHoleNumber++;
         currentHoleHasBeenScored = false;
+        player1_Combined_Score += player1.GetComponent<Player>().score;
+        player2_Combined_Score += player2.GetComponent<Player>().score;
         Destroy(player1);
         Destroy(player2);
         player1 = Instantiate(player1_stone_prefab, holeSpawnPositions[currentHoleNumber].transform.position, Quaternion.identity);
@@ -295,28 +314,28 @@ public class GameManager: MonoBehaviour
         }
     }
 
-    // public void EndGame()
-    // {
-    //         RightArrow.SetActive(false);
-    //         LeftArrow.SetActive(false);
-    //         WinnerText.SetActive(true);
-    //         // end of game logic here 
-    //         if(player1.score > player2.score)
-    //         {
-    //             WinnerText.GetComponentInChildren<TextMeshProUGUI>().text = "Player 1 Wins!";
-    //             WinnerText.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
-    //         }
-    //         else if (player2.score > player1.score)
-    //         {
-    //             WinnerText.GetComponentInChildren<TextMeshProUGUI>().text = "Player 2 Wins!";
-    //             WinnerText.GetComponentInChildren<TextMeshProUGUI>().color = Color.blue;
-    //         }
-    //         else
-    //         {
-    //             WinnerText.GetComponentInChildren<TextMeshProUGUI>().text = "Tie Game!";
-    //             WinnerText.GetComponentInChildren<TextMeshProUGUI>().color = Color.grey;
-    //         }
-    //         cameraOffset = CONST_CAMERA_SCOREBOARD_OFFSET;
-    //         CameraTarget = ScoreBoard;
-    // }
+    public void EndGame()
+    {
+            // RightArrow.SetActive(false);
+            // LeftArrow.SetActive(false);
+            // WinnerText.SetActive(true);
+            // // end of game logic here 
+            // if(player1.score > player2.score)
+            // {
+            //     WinnerText.GetComponentInChildren<TextMeshProUGUI>().text = "Player 1 Wins!";
+            //     WinnerText.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
+            // }
+            // else if (player2.score > player1.score)
+            // {
+            //     WinnerText.GetComponentInChildren<TextMeshProUGUI>().text = "Player 2 Wins!";
+            //     WinnerText.GetComponentInChildren<TextMeshProUGUI>().color = Color.blue;
+            // }
+            // else
+            // {
+            //     WinnerText.GetComponentInChildren<TextMeshProUGUI>().text = "Tie Game!";
+            //     WinnerText.GetComponentInChildren<TextMeshProUGUI>().color = Color.grey;
+            // }
+            // cameraOffset = CONST_CAMERA_SCOREBOARD_OFFSET;
+            // CameraTarget = ScoreBoard;
+    }
 }
