@@ -169,7 +169,21 @@ public class GameManager: MonoBehaviour
     {
         if (orbitalCamera != null)
         {
-            orbitalCamera.SetTarget(cameraTarget != null ? cameraTarget.transform : null);
+            Transform newTarget = cameraTarget != null ? cameraTarget.transform : null;
+
+            if (newTarget != null && cameraTarget == currentPlayer)
+            {
+                Vector3 lookDirection = Vector3.forward;
+                if (currentHoleNumber >= 0 && currentHoleNumber < scoring_targets.Count && scoring_targets[currentHoleNumber] != null)
+                {
+                    lookDirection = scoring_targets[currentHoleNumber].transform.position - newTarget.position;
+                }
+
+                orbitalCamera.SetTargetAndLookDirection(newTarget, lookDirection);
+                return;
+            }
+
+            orbitalCamera.SetTarget(newTarget);
         }
     }
 

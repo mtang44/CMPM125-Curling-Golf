@@ -5092,11 +5092,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OrbitalCamera
   target: {fileID: 0}
   targetOffset: {x: 0, y: 1.5, z: 0}
-  followLerpSpeed: 3
+  followLerpSpeed: 5
   orbitSensitivity: 70
   minPitch: 5
   maxPitch: 45
   invertY: 0
+  resetRotationOnTargetChange: 1
+  targetChangeYaw: 0
+  targetChangePitch: 20
+  zoomSensitivity: 1.5
+  minZoomDistance: 3
+  maxZoomDistance: 20
+  zoomLerpSpeed: 12
 --- !u!1 &1851131047
 GameObject:
   m_ObjectHideFlags: 0
