@@ -35,6 +35,11 @@ public class GameManager: MonoBehaviour
      public GameObject player2_score_text;
      public GameObject leftClickIcon;
 
+    [Header("Score Display Audio")]
+    [SerializeField] private AudioSource scoreAdvanceAudioSource;
+    [SerializeField] private AudioClip scoreAdvanceClip;
+    [SerializeField] private float scoreAdvanceVolume = 1f;
+
      
 
     [Header("Score Display Input")]
@@ -130,6 +135,7 @@ public class GameManager: MonoBehaviour
         if (rewards == null || rewards.Count == 0)
         {
             scoreText.text += "\nNo Points Awarded";
+            PlayScoreAdvanceSound();
             yield return WaitForClickOrSeconds(1.2f);
         }
         else
@@ -137,12 +143,30 @@ public class GameManager: MonoBehaviour
             for (int i = 0; i < rewards.Count; i++)
             {
                 scoreText.text += rewards[i];
+                PlayScoreAdvanceSound();
                 yield return WaitForClickOrSeconds(2f);
             }
         }
 
         scoreText.text += "\n\nTotal: " + playerData.score + " Points";
+        PlayScoreAdvanceSound();
         yield return WaitForClick();
+    }
+
+    private void PlayScoreAdvanceSound()
+    {
+        if (scoreAdvanceAudioSource == null)
+        {
+            return;
+        }
+
+        if (scoreAdvanceClip != null)
+        {
+            scoreAdvanceAudioSource.PlayOneShot(scoreAdvanceClip, scoreAdvanceVolume);
+            return;
+        }
+
+        scoreAdvanceAudioSource.Play();
     }
 
     private IEnumerator WaitForClickOrSeconds(float seconds)

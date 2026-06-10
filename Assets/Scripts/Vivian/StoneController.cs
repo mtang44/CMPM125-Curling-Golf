@@ -25,9 +25,23 @@ public class StoneController : MonoBehaviour
     [SerializeField] private bool isBeingThrownByEnemy = false;
     [SerializeField]  private bool hasStartedMoving = false;
 
+    [Header("Audio - Movement")]
+    [SerializeField] private AudioSource movementAudioSource;
+    [SerializeField] private float movementMinSpeed = 0.2f;
+    [SerializeField] private float movementMaxSpeedForVolume = 14f;
+    [SerializeField] private float movementMaxVolume = 0.8f;
+    [SerializeField] private float movementVolumeLerpSpeed = 10f;
+
+    [Header("Audio - Turning")]
+    [SerializeField] private AudioSource turningAudioSource;
+    [SerializeField] private float turningInputToMaxVolume = 40f;
+    [SerializeField] private float turningMaxVolume = 0.7f;
+    [SerializeField] private float turningVolumeLerpSpeed = 14f;
+
     // CURL SYSTEM
     private bool isCurling = false;
     private Vector2 lastMousePos;
+    private float turnAudioIntensity;
     public float curlStrength = 2f;
     public float maxCurlForce = .5f;
 
@@ -42,6 +56,20 @@ public class StoneController : MonoBehaviour
         if (Ir != null)
         {
             Ir.enabled = true;
+        }
+
+        if (movementAudioSource != null)
+        {
+            movementAudioSource.loop = true;
+            movementAudioSource.playOnAwake = false;
+            movementAudioSource.volume = 0f;
+        }
+
+        if (turningAudioSource != null)
+        {
+            turningAudioSource.loop = true;
+            turningAudioSource.playOnAwake = false;
+            turningAudioSource.volume = 0f;
         }
     }
 
@@ -85,6 +113,7 @@ public class StoneController : MonoBehaviour
 
     void Update()
     {
+            turnAudioIntensity = 0f;
 
        
             if(!hasBeenThrown)
@@ -100,6 +129,8 @@ public class StoneController : MonoBehaviour
             {
                 if (isBeingThrownByEnemy)
                 {
+                    UpdateMovementAudio();
+                    UpdateTurningAudio();
                     return;
                 }
                 if(rb.linearVelocity.magnitude > 3.5f)
@@ -121,6 +152,9 @@ public class StoneController : MonoBehaviour
                 }
                 
             }
+
+            UpdateMovementAudio();
+            UpdateTurningAudio();
     }
     public void reEnableTurn()
     {
@@ -153,6 +187,7 @@ public class StoneController : MonoBehaviour
         if (isThrownByEnemy)
         {
             isCurling = false;
+            turnAudioIntensity = 0f;
         }
     }
 
@@ -242,6 +277,7 @@ public class StoneController : MonoBehaviour
         // Calculate mouse movement
         Vector2 currentMouse = mousePosition;
         float deltaX = currentMouse.x - lastMousePos.x;
+        turnAudioIntensity = Mathf.Clamp01(Mathf.Abs(deltaX) / Mathf.Max(1f, turningInputToMaxVolume));
 
         // Get sideways direction relative to stone
         Vector3 sideDirection = transform.right;
@@ -258,5 +294,58 @@ public class StoneController : MonoBehaviour
         rb.AddForce(sideDirection * curlForce, ForceMode.Force);
 
         lastMousePos = currentMouse;
+    }
+
+    private void UpdateMovementAudio()
+    {
+        if (movementAudioSource == null)
+        {
+            return;
+        }
+
+        float speed = rb != null ? rb.linearVelocity.magnitude : 0f;
+        float targetVolume = 0f;
+        if (speed > movementMinSpeed)
+        {
+            float speed01 = Mathf.Clamp01((speed - movementMinSpeed) / Mathf.Max(0.01f, movementMaxSpeedForVolume - movementMinSpeed));
+            targetVolume = speed01 * movementMaxVolume;
+        }
+
+        movementAudioSource.volume = Mathf.Lerp(movementAudioSource.volume, targetVolume, movementVolumeLerpSpeed * Time.deltaTime);
+
+        if (targetVolume > 0.001f)
+        {
+            if (!movementAudioSource.isPlaying)
+            {
+                movementAudioSource.Play();
+            }
+        }
+        else if (movementAudioSource.isPlaying && movementAudioSource.volume <= 0.01f)
+        {
+            movementAudioSource.Stop();
+        }
+    }
+
+    private void UpdateTurningAudio()
+    {
+        if (turningAudioSource == null)
+        {
+            return;
+        }
+
+        float targetVolume = turnAudioIntensity * turningMaxVolume;
+        turningAudioSource.volume = Mathf.Lerp(turningAudioSource.volume, targetVolume, turningVolumeLerpSpeed * Time.deltaTime);
+
+        if (targetVolume > 0.001f)
+        {
+            if (!turningAudioSource.isPlaying)
+            {
+                turningAudioSource.Play();
+            }
+        }
+        else if (turningAudioSource.isPlaying && turningAudioSource.volume <= 0.01f)
+        {
+            turningAudioSource.Stop();
+        }
     }
 }
