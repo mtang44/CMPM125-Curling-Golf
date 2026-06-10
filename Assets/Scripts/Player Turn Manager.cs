@@ -8,7 +8,9 @@ using UnityEngine.InputSystem;
 
 
 public class GameManager: MonoBehaviour
+
 {
+    public static GameManager Instance { get; private set; }
     public GameObject player1_stone_prefab;
     public int currentHoleNumber;
     public GameObject player2_stone_prefab;
@@ -43,8 +45,10 @@ public class GameManager: MonoBehaviour
     [SerializeField]private GameObject otherPlayer;
 
 
-    public static int player1_total_score ;
-    public static int player2_total_score ;
+    public static int player1_total_score  { get; private set; }
+
+    public static int player2_total_score  { get; private set; }
+
 
     public TextMeshProUGUI p1_score_header;
     public TextMeshProUGUI p2_score_header;
@@ -55,9 +59,10 @@ public class GameManager: MonoBehaviour
     // spawns player 1 and finds uo; 
     void Start()
     {
-        currentHoleNumber = 0; 
+
         // RightArrow = GameObject.Find("Curve Right");
         // LeftArrow = GameObject.Find("Curve Left");
+        currentHoleNumber = 0;
         main_camera = Camera.main;
         orbitalCamera = main_camera != null ? main_camera.GetComponent<OrbitalCamera>() : null;
         cameraOffset = CONST_CAMERA_STONE_OFFSET;
@@ -248,6 +253,8 @@ public class GameManager: MonoBehaviour
         currentHoleNumber++;
         Debug.Log(currentHoleNumber);
         Debug.Log(holeSpawnPositions.Count);
+        player1_total_score += player1.GetComponent<Player>().score; 
+        player2_total_score += player2.GetComponent<Player>().score;
         if(currentHoleNumber >=  holeSpawnPositions.Count)
         {
             EndGame();
@@ -256,8 +263,7 @@ public class GameManager: MonoBehaviour
         else
         {
             currentHoleHasBeenScored = false;
-            player1_total_score += player1.GetComponent<Player>().score;
-            player2_total_score += player2.GetComponent<Player>().score;
+           
             Destroy(player1);
             Destroy(player2);
             player1 = Instantiate(player1_stone_prefab, holeSpawnPositions[currentHoleNumber].transform.position, Quaternion.identity);
@@ -325,27 +331,6 @@ public class GameManager: MonoBehaviour
 
     public void EndGame()
     {
-        
-            // RightArrow.SetActive(false);
-            // LeftArrow.SetActive(false);
-            // WinnerText.SetActive(true);
-            // // end of game logic here 
-            if(player1_total_score >= player2_total_score)
-            {
-                // WinnerText.GetComponentInChildren<TextMeshProUGUI>().text = "Player 1 Wins!";
-                // WinnerText.GetComponentInChildren<TextMeshProUGUI>().color = Color.red;
-            }
-            else if (player2_total_score > player1_total_score)
-            {
-                // WinnerText.GetComponentInChildren<TextMeshProUGUI>().text = "Player 2 Wins!";
-                // WinnerText.GetComponentInChildren<TextMeshProUGUI>().color = Color.blue;
-            }
-            else
-            {
-                // WinnerText.GetComponentInChildren<TextMeshProUGUI>().text = "Tie Game!";
-                // WinnerText.GetComponentInChildren<TextMeshProUGUI>().color = Color.grey;
-            }
-            // cameraOffset = CONST_CAMERA_SCOREBOARD_OFFSET;
-            // cameraTarget = scoreBoard;
+        SceneManager.LoadScene(2);
     }
 }
