@@ -292,14 +292,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6c69adf67c6441f59de46c4dee781c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StoneController
-  maxForce: 110
-  chargeSpeed: 30
+  maxForce: 125
+  chargeSpeed: 50
   hasBeenThrown: 0
   hasEndedTurn: 0
   isBeingThrownByEnemy: 0
   hasStartedMoving: 0
-  curlStrength: 5
-  maxCurlForce: 2
+  curlStrength: 15
+  maxCurlForce: 4
 --- !u!114 &5439899124115988695
 MonoBehaviour:
   m_ObjectHideFlags: 0
